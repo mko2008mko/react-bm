@@ -8,6 +8,7 @@ import reducer from "./reducer";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 
+
 const composeEnhancers = window.window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducer, composeEnhancers(
     applyMiddleware(thunk)
@@ -17,12 +18,14 @@ const store = createStore(reducer, composeEnhancers(
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <Switch>
-                {/* <App /> */}
-                <Route path="/login" component={Login} />
-                <Route path="/" component={App} />
+            
+                <Switch>
+                    {/* <App /> */}
+                    <Route path="/login" component={Login} />
+                    <Route path="/" component={App} />
 
-            </Switch>
+                </Switch>
+            
         </BrowserRouter>
     </Provider>
     , document.getElementById('root'));

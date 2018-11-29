@@ -7,12 +7,15 @@ import Order from "../page/order/order";
 import User from "../page/user/user";
 
 
+
 class RouterMap extends React.Component {
 
     render() {
         return (
             // <BrowserRouter>
+          
                 <Switch>
+                  
                     <Route exact path="/" component={Home} />
                     <Route path="/category" component={Category} />
                     <Route path="/commodity" component={Commodity} />
@@ -20,6 +23,7 @@ class RouterMap extends React.Component {
                     <Route path="/user" component={User} />
                     
                 </Switch>
+               
             // </BrowserRouter>
 
         )

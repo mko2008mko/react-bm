@@ -1,7 +1,8 @@
 import React from "react";
 import { Form, Icon, Input, Button, message } from 'antd';
-import { connect } from "react-redux"
-import { userLogin } from "./store/login.redux"
+import { connect } from "react-redux";
+import { userLogin } from "./store/login.redux";
+import { Redirect } from "react-router-dom";
 
 import "./style.less";
 
@@ -37,8 +38,8 @@ class Login extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-
-        return (
+        const { userInfo } = this.props;
+        return !userInfo ? (
             <div>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <span className="login-title">欢迎登陆xx商城管理系统</span>
@@ -63,7 +64,7 @@ class Login extends React.Component {
                     </Button>
                 </Form>
             </div>
-        );
+        ) : <Redirect to={`/`}/>;
     }
 }
 

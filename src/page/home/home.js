@@ -5,6 +5,7 @@ import "./style.less";
 import { connect } from "react-redux";
 import { getBaseCountData } from "./store/home.redux";
 import { Link } from "react-router-dom";
+import Authrouter from "../../components/authrouter/authrouter";
 
 @connect(
     state => state.homeReducer,
@@ -19,10 +20,11 @@ class Home extends React.Component {
     render() {
 
         const { baseCountData } = this.props
-        console.log(baseCountData);
+        // console.log(baseCountData);
 
         return (
             <div className="home-wrapper">
+            <Authrouter/>
                 <PageTitle title="首页" />
                 {baseCountData ?
                     <div className="card-wrapper">

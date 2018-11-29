@@ -1,14 +1,26 @@
 import React from 'react';
 import { Layout, Menu, Icon, Dropdown } from "antd";
+import { connect } from "react-redux";
+import { userLogOut } from "../../page/login/store/login.redux";
+
 const { Header } = Layout;
 
+
+@connect(
+    null,
+    { userLogOut }
+)
 class HeaderComponent extends React.Component {
+
+    handleLogOut = () => {
+        this.props.userLogOut();
+    }
 
     render() {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <span>退出登录</span>
+                    <span onClick={this.handleLogOut}>退出登录</span>
                 </Menu.Item>
             </Menu>
         )

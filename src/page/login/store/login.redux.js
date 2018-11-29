@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from "qs";
 const USER_LOGIN_SUCCESS = "USER_LOGIN_SUCCESS";
 const USER_LOGIN_FAIL = "USER_LOGIN_FAIL";
-const CLEAR_DATA = "CLEAR_DATA";
+const USER_LOGOUT = "USER_LOGOUT";
 
 const initState = {
     userInfo: null,
@@ -16,6 +16,9 @@ export const loginRducer = (state = initState, action) => {
             return { ...state, userInfo: action.data, requestFlag: state.requestFlag + 1 };
         case USER_LOGIN_FAIL:
             return { ...state, msg: action.msg, requestFlag: state.requestFlag + 1 };
+        case USER_LOGOUT:
+            // console.log("-----------");
+            return initState;
         default:
             return state;
     }
@@ -36,12 +39,6 @@ const loginFail = (msg) => {
     }
 }
 
-export const clearData = () => {
-    return {
-        tyep: CLEAR_DATA
-    }
-}
-
 export const userLogin = (username, password) => {
     return dispatch => {
         axios.post('/manage/user/login.do', qs.stringify({ username, password }))
@@ -52,6 +49,25 @@ export const userLogin = (username, password) => {
                 } else {
                     dispatch(loginFail(res.data.msg));
                 }
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+    }
+}
+
+const logOutSuccess = () => {
+    return {
+        type: USER_LOGOUT
+    }
+}
+
+export const userLogOut = () => {
+    return dispatch => {
+        axios.post('/user/logout.do')
+            .then(res => {
+                // console.log(res);
+                dispatch(logOutSuccess());
             })
             .catch((e) => {
                 console.log(e);
