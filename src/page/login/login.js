@@ -1,20 +1,47 @@
 import React from "react";
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
+import { connect } from "react-redux"
+import { userLogin } from "./store/login.redux"
 
 import "./style.less";
 
 const FormItem = Form.Item;
 
 
-
+@connect(
+    state => state.loginRducer,
+    { userLogin }
+)
 class Login extends React.Component {
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                this.props.userLogin(values.userName, values.password)
+                // console.log('Received values of form: ', values);
+            }
+        });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { userInfo, msg, requestFlag } = this.props;
+        if (prevProps.requestFlag === requestFlag) {
+            return;
+        }
+        if (!userInfo && msg) {
+
+            message.error(msg);
+        }
+    }
 
     render() {
         const { getFieldDecorator } = this.props.form;
+
         return (
             <div>
                 <Form onSubmit={this.handleSubmit} className="login-form">
-                <span className="login-title">欢迎登陆xx商城管理系统</span>
+                    <span className="login-title">欢迎登陆xx商城管理系统</span>
                     <FormItem>
                         {getFieldDecorator('userName', {
                             rules: [{ required: true, message: 'Please input your username!' }],
@@ -33,7 +60,7 @@ class Login extends React.Component {
 
                     <Button type="primary" htmlType="submit" className="login-form-button">
                         Log in
-          </Button>
+                    </Button>
                 </Form>
             </div>
         );

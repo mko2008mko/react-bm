@@ -1,11 +1,11 @@
 import React from 'react';
 import { Layout, Menu, Icon, Dropdown } from "antd";
-import { Link, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import RouterMap from "./rouoter/router-map";
 
 
 import "./style.less";
-const { Header, Footer, Sider, Content } = Layout;
+const { Header ,Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 
@@ -16,7 +16,7 @@ class App extends React.Component {
         const menu = (
             <Menu>
                 <Menu.Item>
-                    <span >退出登录</span>
+                    <span>退出登录</span>
                 </Menu.Item>
             </Menu>
         )
@@ -67,11 +67,11 @@ class App extends React.Component {
                                 </SubMenu>
                             </Menu>
                         </Sider>
-                    <Content className="content">
-                        <RouterMap />
-                    </Content>
-                </Layout>
-               
+                        <Content className="content">
+                            <RouterMap />
+                        </Content>
+                    </Layout>
+
                 </Layout>
 
             </div >
