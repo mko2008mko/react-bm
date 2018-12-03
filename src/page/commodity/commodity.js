@@ -1,10 +1,10 @@
 import React from "react";
-import { Select, Input, Button, Table, Divider, Tag, Pagination } from "antd";
+import {  Button, Table, Divider, Tag, Pagination,message } from "antd";
 import { connect } from "react-redux";
 import { getCData, searchCData } from "./store/commodity.redux";
 import PageTitle from "../../components/page-title/";
+import SelectSearch from "../../components/select-search";
 import "./style.less";
-const Option = Select.Option;
 const { Column } = Table;
 
 @connect(
@@ -16,34 +16,35 @@ class Commodity extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            stype: 'productId',
-            kwd: ''
+            kwd: '',
+            stype:'productId',
+            page: 1
         }
     }
 
-    handleClick = () => {
-        console.log(this.state);
-        if (this.state.kwd) {
-            this.props.searchCData(1, this.state.stype, this.state.kwd);
+    handleClick = (sparams) => {
+        if (sparams.kwd) {
+            if(sparams.stype==='productId'&& !(/(^[1-9]\d*$)/.test(sparams.kwd))){
+                message.error('按id查询必须输入正整数');
+            }else{
+                this.setState({ kwd: sparams.kwd,stype:sparams.stype })
+                this.props.searchCData(1, sparams.stype, sparams.kwd);
+            }
+        } else {
+            this.setState({ page: 1 })
+            this.props.getCData(1);
         }
     }
 
-    handleSelectChange = (value) => {
-        // console.log(`selected ${value}`);
-        // this.props.setSearchType(value);
-        this.setState({ stype: value });
-    }
 
-    handleInputChange = (e) => {
-        // console.log(e.target.value);
-        this.setState({ kwd: e.target.value })
-    }
 
     componentDidMount() {
-        this.props.getCData(1);
+        this.props.getCData(this.state.page);
     }
 
     handlePageChange = (page) => {
+        this.setState({ page: page })
+        // console.log(this.state.kwd)
         if (this.state.kwd) {
             this.props.searchCData(page, this.state.stype, this.state.kwd);
         } else {
@@ -54,22 +55,26 @@ class Commodity extends React.Component {
 
     render() {
 
+        const initSSData = [
+            {
+                key: 1,
+                value: "productId",
+                text: "按商品ID查询",
+            },
+            {
+                key: 2,
+                value: "productName",
+                text: "按商品名称查询",
+            }
+        ]
+
         const { commodityList, total } = this.props
         return commodityList.length ? (
             <div>
                 <PageTitle title="商品列表" />
                 <Button className="commodity-add-btn" type="primary">+添加商品</Button>
-                <div className="commodity-search-wrapper">
-                    <Select defaultValue="productId" style={{ width: 160, marginRight: 20 }} onChange={this.handleSelectChange}>
-                        <Option value="productId">按商品ID查询</Option>
-                        <Option value="productName">按商品名称查询</Option>
-                    </Select>
-                    <Input placeholder="关键词"
-                        style={{ width: 200, marginRight: 20 }}
-                        value={this.state.kwd}
-                        onChange={this.handleInputChange} />
-                    <Button type="primary" onClick={this.handleClick}>搜索</Button>
-                </div>
+                <SelectSearch initSSData={initSSData} handleClick={this.handleClick} />
+            
 
                 <Table dataSource={commodityList} pagination={false} >
 
@@ -114,6 +119,7 @@ class Commodity extends React.Component {
                     />
                 </Table>
                 <Pagination defaultCurrent={1}
+                    current={this.state.page}
                     total={total} style={{ marginTop: 20, marginLeft: 20, marginBottom: 20 }}
                     onChange={this.handlePageChange}
                 />

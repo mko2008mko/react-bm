@@ -2,7 +2,6 @@ import axios from "axios";
 import qs from "qs"
 
 const GET_COMMODITY_DATA = "GET_COMMODITY_DATA";
-const SEARCH_COMMODITY_DATA = "SEARCH_COMMODITY_DATA";
 
 
 const initState = {
@@ -51,7 +50,7 @@ export const searchCData = (pageNum, stype, kwd) => {
     return dispatch => {
         axios.post('/manage/product/search.do', qs.stringify({ pageNum, [stype]: kwd }))
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.status === 0) {
                     dispatch(getCDSuccess(res.data.data.list, res.data.data.total));
                 } else {
