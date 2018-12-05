@@ -1,7 +1,8 @@
 import React from "react";
-import {  Button, Table, Divider, Tag, Pagination,message } from "antd";
+import { Button, Table, Divider, Tag, Pagination, message, Modal } from "antd";
 import { connect } from "react-redux";
-import { getCData, searchCData } from "./store/commodity.redux";
+import { getCData, searchCData, activeCommodity } from "./store/commodity.redux";
+import { Link } from "react-router-dom";
 import PageTitle from "../../components/page-title/";
 import SelectSearch from "../../components/select-search";
 import "./style.less";
@@ -9,7 +10,7 @@ const { Column } = Table;
 
 @connect(
     state => state.commodityReducer,
-    { getCData, searchCData }
+    { getCData, searchCData, activeCommodity }
 )
 class Commodity extends React.Component {
 
@@ -17,17 +18,17 @@ class Commodity extends React.Component {
         super();
         this.state = {
             kwd: '',
-            stype:'productId',
+            stype: 'productId',
             page: 1
         }
     }
 
     handleClick = (sparams) => {
         if (sparams.kwd) {
-            if(sparams.stype==='productId'&& !(/(^[1-9]\d*$)/.test(sparams.kwd))){
+            if (sparams.stype === 'productId' && !(/(^[1-9]\d*$)/.test(sparams.kwd))) {
                 message.error('按id查询必须输入正整数');
-            }else{
-                this.setState({ kwd: sparams.kwd,stype:sparams.stype })
+            } else {
+                this.setState({ kwd: sparams.kwd, stype: sparams.stype })
                 this.props.searchCData(1, sparams.stype, sparams.kwd);
             }
         } else {
@@ -42,6 +43,21 @@ class Commodity extends React.Component {
         this.props.getCData(this.state.page);
     }
 
+    componentDidUpdate(prevProps, prevState){
+        const {activeFlag} = this.props;
+        // console.log(this.state.page)
+        if (prevProps.activeFlag === activeFlag) {
+            return;
+        }
+
+        if (this.state.kwd) {
+            this.props.searchCData(this.state.page, this.state.stype, this.state.kwd);
+        } else {
+            this.props.getCData(this.state.page);
+        }
+
+    }
+
     handlePageChange = (page) => {
         this.setState({ page: page })
         // console.log(this.state.kwd)
@@ -52,6 +68,20 @@ class Commodity extends React.Component {
         }
 
     }
+
+    handleTagClick = (status, productid) => {
+        const { activeCommodity } = this.props;
+        // console.log(status,productid);
+        Modal.confirm({
+            title: '确定要下架该商品吗',
+            // content: 'When clicked the OK button, this dialog will be closed after 1 second',
+            onOk() {
+                activeCommodity(productid, status)
+            },
+            onCancel() { },
+        });
+    }
+
 
     render() {
 
@@ -69,12 +99,15 @@ class Commodity extends React.Component {
         ]
 
         const { commodityList, total } = this.props
+        // console.log(commodityList)
         return commodityList.length ? (
             <div>
                 <PageTitle title="商品列表" />
-                <Button className="commodity-add-btn" type="primary">+添加商品</Button>
+                <Link to={`/commodity/add`}>
+                    <Button className="commodity-add-btn" type="primary">+添加商品</Button>
+                </Link>
                 <SelectSearch initSSData={initSSData} handleClick={this.handleClick} />
-            
+
 
                 <Table dataSource={commodityList} pagination={false} >
 
@@ -98,20 +131,23 @@ class Commodity extends React.Component {
                         title="状态"
                         dataIndex="status"
                         key="status"
-                        render={(status) => (
-                            <span>
-                                {status}
-                                <Tag color="blue" >上架</Tag>
-                            </span>
-                        )}
+                        render={(status, commodity) => {
+                            // console.log(status,commodity.id);
+                            if (status === 1) {
+                                return <span>在售<Tag color="blue" onClick={this.handleTagClick.bind(this, 2, commodity.id)}>下架</Tag></span>
+                            } else {
+                                return <span>已下架<Tag color="blue" onClick={this.handleTagClick.bind(this, 1, commodity.id)}>上架</Tag></span>
+                            }
+                        }
+                        }
                     />
 
                     <Column
                         title="操作"
                         key="action"
-                        render={() => (
+                        render={(s) => (
                             <span>
-                                <a href="#:;">详情</a>
+                                <Link to={`/commodity/detail/${s.id}`}>详情</Link>
                                 <Divider type="vertical" />
                                 <a href="#:;">编辑</a>
                             </span>

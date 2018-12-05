@@ -9,7 +9,7 @@ class SelectSearch extends React.Component {
     constructor(props){
         super();
         let initvalue = props.initSSData[0].value
-        console.log(initvalue)
+        // console.log(initvalue)
         this.state = {
             stype:initvalue,
             kwd: ''
